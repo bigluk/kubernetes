@@ -1,0 +1,48 @@
+version: '3.3'
+
+networks: 
+  myNetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 162.21.0.0/8
+
+services:
+  pgsql:
+    image: postgres:bullseye
+    restart: unless-stopped
+    container_name: postgresqlDB
+    networks: 
+      myNetwork:
+        ipv4_address: 162.21.0.2
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=psw
+      - POSTGRES_DB=employeeDB
+  
+  sdapp:
+    image: quarkus/simple-docker-app-jvm
+    restart: unless-stopped
+    container_name: simple-docker-app
+    
+    networks:
+      myNetwork:
+        ipv4_address: 162.21.0.3
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+    environment:
+      - PROFILE=dev
+      - PSQL_DOMAIN=postgresqlDB
+
+volumes:
+  psdb-volume:
+
