@@ -27,7 +27,7 @@ services:
       - POSTGRES_DB=employeeDB
   
   sdapp:
-    image: quarkus/simple-docker-app-jvm
+    image: bigluc/simple-docker-app
     restart: unless-stopped
     container_name: simple-docker-app
     
