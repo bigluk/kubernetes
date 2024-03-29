@@ -1,0 +1,82 @@
+# In this file we are gonna define the postgres configuration deployment and the
+# service associate to it. Let's take a look to the main part of this file
+
+# Template
+# It is the definition of the pod. Inside of it, we find spec and containers where
+# we set all the properties of the image that we want to run on our container.
+
+# Label
+# Inside the metadata we have the field Label. This field is used to identify 
+# univocally all the pod that belong to a specific deployment. We can say that
+# label is used to group all the pods of a specific deployment under a common name.
+# In our case we set that all pods of our deployment called (postgres-deployment) 
+# will be group under the name postgres. Using the selector matchLabels kubernetes
+# and the labels, Kubernetes is able to discover what pod belongs to each deployment.
+
+# Replicas
+# It is the simplest properties. It is used to tell to kubernetes how many pods 
+# we want to create. Remember that in case we want more than one stateful (database) 
+#instance, we need to use the statefulset. 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgresql-db
+        image: postgres:bullseye
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: psql-secret
+              key: psql-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: psql-secret
+              key: psql-password
+        - name: POSTGRES_DB
+          value: employeeDB
+
+---
+
+# Now let's define the kubernetes service, a sort of static IP, associated 
+# to postgres. In the service specification there is no so much lines. 
+# The most important are:
+# selector 
+# where we use the label described previously, to identify univocally to which 
+# kubernetes component the service will be attached to.
+# 
+# NOTE
+# port and target port can be different but it's a common practice to set them with
+# the same value.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: psql-service
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+# If you want to access the postgres db run the following command:
+# kubectl exec -it postgres-deployment-c6f47d4c4-m25t2 --psql -h 10.244.0.3 -U user --password psw -p 5432 employeeDB

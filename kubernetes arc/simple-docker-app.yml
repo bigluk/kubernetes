@@ -1,0 +1,56 @@
+# Remember that to send request to the app you must open a tunnel with the following
+# command:
+# minikube service {service-id} --url
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-docker-app-deployment
+  labels:
+    app: my-docker-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-docker-app
+  template:
+    metadata:
+      labels:
+        app: my-docker-app
+    spec:
+      containers:
+      - name: my-docker-app
+        image: bigluc/simple-docker-app:1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: psql-secret
+              key: psql-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: psql-secret
+              key: psql-password
+        - name: PSQL_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: psql-config
+              key: psql-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-docker-app-service
+spec:
+  type: NodePort
+  selector:
+    app: my-docker-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30100
+       

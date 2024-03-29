@@ -1,0 +1,12 @@
+# In this file we put all the properties to create the configmap obj. Remember that
+# we use the configmap to decouple configuration and container. In this particular 
+# case we use the configmap to indicate the psql-url. In this case we set the 
+# psql-url with the name of the service (static IP) in order to not point the
+# pod directly but to point its service. 
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: psql-config
+data:
+  psql-url: psql-service
