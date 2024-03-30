@@ -79,4 +79,4 @@ spec:
       targetPort: 5432
 
 # If you want to access the postgres db run the following command:
-# kubectl exec -it postgres-deployment-c6f47d4c4-m25t2 --psql -h 10.244.0.3 -U user --password psw -p 5432 employeeDB
+# kubectl exec -it {db-deployment-id} --psql -h {db-deployment-ip} -U {db-user} --password {db-password} -p {db-port} {db-schema}
