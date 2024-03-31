@@ -129,7 +129,8 @@ But what if we want to expose our application to be accessible from external use
 We must use Ingress. Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster. 
 Traffic routing is controlled by rules defined on the Ingress resource.
 
-(attach ingress screen)
+<img width="449" alt="Ingress" src="https://github.com/bigluk/kubernetes/assets/133915457/7b34282d-0caf-4304-aa6b-e325208a6b0f">
+
 
 ### ConfigMap (cm)
 A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
