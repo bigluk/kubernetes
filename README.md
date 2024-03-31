@@ -1,4 +1,4 @@
-### Kubernetes
+# Kubernetes
 
 ## Introduction
 The following project is an pproach based example to discover the main characteristics of Kubernetes.
